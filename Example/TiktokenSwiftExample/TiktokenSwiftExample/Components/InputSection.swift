@@ -48,7 +48,10 @@ struct InputSection: View {
                     }
                 }
             
-            Button(action: onEncode) {
+            Button(action: {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                onEncode()
+            }) {
                 HStack {
                     if isLoading {
                         ProgressView()
