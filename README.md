@@ -1,14 +1,10 @@
 # TiktokenSwift
 
-Swift bindings for OpenAI's tiktoken library - a fast BPE tokenizer for use with OpenAI's models.
+Native Swift wrapper for OpenAI's [tiktoken](https://github.com/openai/tiktoken) library, providing fast BPE tokenization for OpenAI models.
 
-## Features
+TiktokenSwift brings the official tiktoken tokenizer to Swift applications through a lightweight FFI bridge, maintaining the same performance and accuracy as the original Python implementation. It supports all standard OpenAI encodings including `cl100k_base` (used by GPT-3.5-turbo and GPT-4), `r50k_base`, `p50k_base`, and `o200k_base`.
 
-- 🚀 Fast tokenization using Rust implementation
-- 📱 Support for iOS and macOS
-- 🔧 Simple Swift API
-- 🎯 Compatible with OpenAI's token formats
-- 📦 Easy integration via Swift Package Manager
+📱 Check out the [example SwiftUI app](Example/TiktokenSwiftExample) to see TiktokenSwift in action!
 
 ## Installation
 
