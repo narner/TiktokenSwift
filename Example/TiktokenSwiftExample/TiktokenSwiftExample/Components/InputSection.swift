@@ -14,8 +14,23 @@ struct InputSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Input Text")
-                .font(.headline)
+            HStack {
+                Text("Input Text")
+                    .font(.headline)
+                
+                Spacer()
+                
+                if !inputText.isEmpty {
+                    Button(action: {
+                        inputText = ""
+                    }) {
+                        Label("Clear", systemImage: "xmark.circle.fill")
+                            .labelStyle(.iconOnly)
+                            .foregroundColor(.gray)
+                            .imageScale(.medium)
+                    }
+                }
+            }
             
             TextEditor(text: $inputText)
                 .frame(minHeight: 100)
@@ -24,6 +39,14 @@ struct InputSection: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                 )
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Done") {
+                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                        }
+                    }
+                }
             
             Button(action: onEncode) {
                 HStack {

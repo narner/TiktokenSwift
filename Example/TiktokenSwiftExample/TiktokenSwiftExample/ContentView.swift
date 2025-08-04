@@ -27,7 +27,7 @@ struct ContentView: View {
                         }
                         .pickerStyle(.menu)
                         .disabled(viewModel.isLoading)
-                        .onChange(of: viewModel.selectedEncoding) { newValue in
+                        .onChange(of: viewModel.selectedEncoding) { oldValue, newValue in
                             viewModel.changeEncoding(to: newValue)
                         }
                     }
@@ -88,10 +88,19 @@ struct ContentView: View {
             }
             .navigationTitle("Tiktoken Swift Demo")
             .navigationBarTitleDisplayMode(.large)
+            .onTapGesture {
+                hideKeyboard()
+            }
         }
     }
 }
 
 #Preview {
     ContentView()
+}
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
 }
