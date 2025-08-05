@@ -116,8 +116,8 @@ class TiktokenViewModel: ObservableObject {
                 return try encoder.decodeBytes(tokens: tokensToProcess)
             }.value
             
-            // Convert Data to String
-            if let decoded = String(data: result, encoding: .utf8) {
+            // Convert [UInt8] to String
+            if let decoded = String(data: Data(result), encoding: .utf8) {
                 decodedText = decoded
             } else {
                 errorMessage = "Failed to convert decoded bytes to string"
@@ -134,11 +134,32 @@ class TiktokenViewModel: ObservableObject {
     }
     
     var vocabularySize: Int {
-        return Int(encoder?.nVocab() ?? 0)
+        // This information is not available in the simplified interface
+        // Return estimated sizes based on encoding type
+        switch selectedEncoding {
+        case .cl100kBase:
+            return 100256
+        case .r50kBase:
+            return 50257
+        case .p50kBase:
+            return 50281
+        case .o200kBase:
+            return 200000
+        }
     }
     
     var specialTokensCount: Int {
-        encoder?.specialTokens().count ?? 0
+        // Special tokens count based on encoding type
+        switch selectedEncoding {
+        case .cl100kBase:
+            return 5
+        case .r50kBase:
+            return 1
+        case .p50kBase:
+            return 1
+        case .o200kBase:
+            return 2
+        }
     }
     
     func changeEncoding(to newEncoding: EncodingType) {
