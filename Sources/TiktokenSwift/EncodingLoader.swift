@@ -43,7 +43,13 @@ public struct EncodingLoader {
             
             // For now, use test vocabulary if available
             // In production, you'd load the full BPE ranks
-            let encoder = encodingData.testVocabulary ?? [:]
+            let stringEncoder = encodingData.testVocabulary ?? [:]
+            
+            // Convert string keys to byte arrays
+            var encoder: [[UInt8]: UInt32] = [:]
+            for (key, value) in stringEncoder {
+                encoder[Array(key.utf8)] = value
+            }
             
             return try newCoreBpe(
                 encoder: encoder,

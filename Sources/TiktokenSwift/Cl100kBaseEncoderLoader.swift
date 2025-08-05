@@ -133,12 +133,12 @@ public struct Cl100kBaseEncoderLoader {
     
     /// Parse tiktoken BPE format
     /// The format is: base64-encoded token followed by space and rank
-    private static func parseTiktokenBpe(_ data: Data) throws -> [String: UInt32] {
+    private static func parseTiktokenBpe(_ data: Data) throws -> [[UInt8]: UInt32] {
         guard let content = String(data: data, encoding: .utf8) else {
             throw LoadError.invalidData
         }
         
-        var encoder: [String: UInt32] = [:]
+        var encoder: [[UInt8]: UInt32] = [:]
         
         // Split by lines and parse each line
         let lines = content.split(separator: "\n")
@@ -158,16 +158,8 @@ public struct Cl100kBaseEncoderLoader {
                 continue
             }
             
-            // For tokens that are valid UTF-8, store as string
-            // For non-UTF8 tokens, we need special handling
-            if let tokenString = String(data: tokenData, encoding: .utf8) {
-                encoder[tokenString] = rank
-            } else {
-                // For non-UTF8 sequences, we'll need to handle them specially
-                // This matches our uniffi_bindings.rs implementation
-                let base64String = "base64:" + tokenData.base64EncodedString()
-                encoder[base64String] = rank
-            }
+            // Store as byte array directly - no need for base64 encoding
+            encoder[Array(tokenData)] = rank
         }
         
         return encoder

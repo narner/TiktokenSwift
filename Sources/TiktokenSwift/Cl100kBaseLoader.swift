@@ -46,7 +46,7 @@ public struct Cl100kBaseLoader {
         print("   Token bytes: \(encodingData.tokenBytes.compactMap { $0 }.count)")
         
         // Build the encoder dictionary from token bytes
-        var encoder: [String: UInt32] = [:]
+        var encoder: [[UInt8]: UInt32] = [:]
         
         // Process each token
         for (tokenId, base64Bytes) in encodingData.tokenBytes.enumerated() {
@@ -55,16 +55,8 @@ public struct Cl100kBaseLoader {
                 continue
             }
             
-            // Convert bytes to string
-            // For BPE, we need to handle both UTF-8 strings and raw bytes
-            if let tokenString = String(data: tokenData, encoding: .utf8) {
-                encoder[tokenString] = UInt32(tokenId)
-            } else {
-                // For non-UTF8 sequences, we'll need special handling
-                // This is a simplified approach - full BPE would need more complex handling
-                let hexString = tokenData.map { String(format: "%02x", $0) }.joined()
-                encoder["<0x\(hexString)>"] = UInt32(tokenId)
-            }
+            // Store as byte array directly
+            encoder[Array(tokenData)] = UInt32(tokenId)
         }
         
         print("   Built encoder with \(encoder.count) entries")

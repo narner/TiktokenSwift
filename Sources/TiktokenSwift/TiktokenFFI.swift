@@ -415,15 +415,15 @@ fileprivate final class UniffiHandleMap<T>: @unchecked Sendable {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-fileprivate struct FfiConverterUInt32: FfiConverterPrimitive {
-    typealias FfiType = UInt32
-    typealias SwiftType = UInt32
+fileprivate struct FfiConverterUInt8: FfiConverterPrimitive {
+    typealias FfiType = UInt8
+    typealias SwiftType = UInt8
 
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt32 {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt8 {
         return try lift(readInt(&buf))
     }
 
-    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+    public static func write(_ value: UInt8, into buf: inout [UInt8]) {
         writeInt(&buf, lower(value))
     }
 }
@@ -431,11 +431,11 @@ fileprivate struct FfiConverterUInt32: FfiConverterPrimitive {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-fileprivate struct FfiConverterUInt64: FfiConverterPrimitive {
-    typealias FfiType = UInt64
-    typealias SwiftType = UInt64
+fileprivate struct FfiConverterUInt32: FfiConverterPrimitive {
+    typealias FfiType = UInt32
+    typealias SwiftType = UInt32
 
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt64 {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt32 {
         return try lift(readInt(&buf))
     }
 
@@ -485,56 +485,18 @@ fileprivate struct FfiConverterString: FfiConverter {
     }
 }
 
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-fileprivate struct FfiConverterData: FfiConverterRustBuffer {
-    typealias SwiftType = Data
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Data {
-        let len: Int32 = try readInt(&buf)
-        return Data(try readBytes(&buf, count: Int(len)))
-    }
-
-    public static func write(_ value: Data, into buf: inout [UInt8]) {
-        let len = Int32(value.count)
-        writeInt(&buf, len)
-        writeBytes(&buf, value)
-    }
-}
-
 
 
 
 public protocol CoreBpeProtocol: AnyObject, Sendable {
     
-    func decodeBytes(tokens: [UInt32]) throws  -> Data
-    
-    func decodeSingleTokenBytes(token: UInt32) throws  -> Data
+    func decodeBytes(tokens: [UInt32]) throws  -> [UInt8]
     
     func encode(text: String, allowedSpecial: [String])  -> [UInt32]
     
-    func encodeBytes(input: Data)  -> [UInt32]
-    
     func encodeOrdinary(text: String)  -> [UInt32]
     
-    func encodeSinglePiece(piece: Data)  -> [UInt32]
-    
-    func encodeSingleToken(piece: Data) throws  -> UInt32
-    
-    func encodeWithDetails(text: String, allowedSpecial: [String])  -> EncodingResult
-    
     func encodeWithSpecialTokens(text: String)  -> [UInt32]
-    
-    func encodeWithUnstable(text: String, allowedSpecial: [String])  -> UnstableEncodingResult
-    
-    func maxTokenValue()  -> UInt32
-    
-    func nVocab()  -> UInt32
-    
-    func specialTokens()  -> [String]
-    
-    func tokenByteValues()  -> [Data]
     
 }
 open class CoreBpe: CoreBpeProtocol, @unchecked Sendable {
@@ -576,17 +538,7 @@ open class CoreBpe: CoreBpeProtocol, @unchecked Sendable {
     public func uniffiCloneHandle() -> UInt64 {
         return try! rustCall { uniffi_tiktoken_fn_clone_corebpe(self.handle, $0) }
     }
-public convenience init(encoder: [String: UInt32], specialTokensEncoder: [String: UInt32], pattern: String) {
-    let handle =
-        try! rustCall() {
-    uniffi_tiktoken_fn_constructor_corebpe_new(
-        FfiConverterDictionaryStringUInt32.lower(encoder),
-        FfiConverterDictionaryStringUInt32.lower(specialTokensEncoder),
-        FfiConverterString.lower(pattern),$0
-    )
-}
-    self.init(unsafeFromHandle: handle)
-}
+    // No primary constructor declared for this class.
 
     deinit {
         try! rustCall { uniffi_tiktoken_fn_free_corebpe(handle, $0) }
@@ -595,18 +547,10 @@ public convenience init(encoder: [String: UInt32], specialTokensEncoder: [String
     
 
     
-open func decodeBytes(tokens: [UInt32])throws  -> Data  {
-    return try  FfiConverterData.lift(try rustCallWithError(FfiConverterTypeTiktokenError_lift) {
+open func decodeBytes(tokens: [UInt32])throws  -> [UInt8]  {
+    return try  FfiConverterSequenceUInt8.lift(try rustCallWithError(FfiConverterTypeTiktokenError_lift) {
     uniffi_tiktoken_fn_method_corebpe_decode_bytes(self.uniffiCloneHandle(),
         FfiConverterSequenceUInt32.lower(tokens),$0
-    )
-})
-}
-    
-open func decodeSingleTokenBytes(token: UInt32)throws  -> Data  {
-    return try  FfiConverterData.lift(try rustCallWithError(FfiConverterTypeTiktokenError_lift) {
-    uniffi_tiktoken_fn_method_corebpe_decode_single_token_bytes(self.uniffiCloneHandle(),
-        FfiConverterUInt32.lower(token),$0
     )
 })
 }
@@ -620,14 +564,6 @@ open func encode(text: String, allowedSpecial: [String]) -> [UInt32]  {
 })
 }
     
-open func encodeBytes(input: Data) -> [UInt32]  {
-    return try!  FfiConverterSequenceUInt32.lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_encode_bytes(self.uniffiCloneHandle(),
-        FfiConverterData.lower(input),$0
-    )
-})
-}
-    
 open func encodeOrdinary(text: String) -> [UInt32]  {
     return try!  FfiConverterSequenceUInt32.lift(try! rustCall() {
     uniffi_tiktoken_fn_method_corebpe_encode_ordinary(self.uniffiCloneHandle(),
@@ -636,72 +572,10 @@ open func encodeOrdinary(text: String) -> [UInt32]  {
 })
 }
     
-open func encodeSinglePiece(piece: Data) -> [UInt32]  {
-    return try!  FfiConverterSequenceUInt32.lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_encode_single_piece(self.uniffiCloneHandle(),
-        FfiConverterData.lower(piece),$0
-    )
-})
-}
-    
-open func encodeSingleToken(piece: Data)throws  -> UInt32  {
-    return try  FfiConverterUInt32.lift(try rustCallWithError(FfiConverterTypeTiktokenError_lift) {
-    uniffi_tiktoken_fn_method_corebpe_encode_single_token(self.uniffiCloneHandle(),
-        FfiConverterData.lower(piece),$0
-    )
-})
-}
-    
-open func encodeWithDetails(text: String, allowedSpecial: [String]) -> EncodingResult  {
-    return try!  FfiConverterTypeEncodingResult_lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_encode_with_details(self.uniffiCloneHandle(),
-        FfiConverterString.lower(text),
-        FfiConverterSequenceString.lower(allowedSpecial),$0
-    )
-})
-}
-    
 open func encodeWithSpecialTokens(text: String) -> [UInt32]  {
     return try!  FfiConverterSequenceUInt32.lift(try! rustCall() {
     uniffi_tiktoken_fn_method_corebpe_encode_with_special_tokens(self.uniffiCloneHandle(),
         FfiConverterString.lower(text),$0
-    )
-})
-}
-    
-open func encodeWithUnstable(text: String, allowedSpecial: [String]) -> UnstableEncodingResult  {
-    return try!  FfiConverterTypeUnstableEncodingResult_lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_encode_with_unstable(self.uniffiCloneHandle(),
-        FfiConverterString.lower(text),
-        FfiConverterSequenceString.lower(allowedSpecial),$0
-    )
-})
-}
-    
-open func maxTokenValue() -> UInt32  {
-    return try!  FfiConverterUInt32.lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_max_token_value(self.uniffiCloneHandle(),$0
-    )
-})
-}
-    
-open func nVocab() -> UInt32  {
-    return try!  FfiConverterUInt32.lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_n_vocab(self.uniffiCloneHandle(),$0
-    )
-})
-}
-    
-open func specialTokens() -> [String]  {
-    return try!  FfiConverterSequenceString.lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_special_tokens(self.uniffiCloneHandle(),$0
-    )
-})
-}
-    
-open func tokenByteValues() -> [Data]  {
-    return try!  FfiConverterSequenceData.lift(try! rustCall() {
-    uniffi_tiktoken_fn_method_corebpe_token_byte_values(self.uniffiCloneHandle(),$0
     )
 })
 }
@@ -754,156 +628,14 @@ public func FfiConverterTypeCoreBpe_lower(_ value: CoreBpe) -> UInt64 {
 
 
 
-public struct EncodingResult {
-    public var tokens: [UInt32]
-    public var lastPieceTokenLen: UInt64
-
-    // Default memberwise initializers are never public by default, so we
-    // declare one manually.
-    public init(tokens: [UInt32], lastPieceTokenLen: UInt64) {
-        self.tokens = tokens
-        self.lastPieceTokenLen = lastPieceTokenLen
-    }
-}
-
-#if compiler(>=6)
-extension EncodingResult: Sendable {}
-#endif
-
-
-extension EncodingResult: Equatable, Hashable {
-    public static func ==(lhs: EncodingResult, rhs: EncodingResult) -> Bool {
-        if lhs.tokens != rhs.tokens {
-            return false
-        }
-        if lhs.lastPieceTokenLen != rhs.lastPieceTokenLen {
-            return false
-        }
-        return true
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(tokens)
-        hasher.combine(lastPieceTokenLen)
-    }
-}
-
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public struct FfiConverterTypeEncodingResult: FfiConverterRustBuffer {
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> EncodingResult {
-        return
-            try EncodingResult(
-                tokens: FfiConverterSequenceUInt32.read(from: &buf), 
-                lastPieceTokenLen: FfiConverterUInt64.read(from: &buf)
-        )
-    }
-
-    public static func write(_ value: EncodingResult, into buf: inout [UInt8]) {
-        FfiConverterSequenceUInt32.write(value.tokens, into: &buf)
-        FfiConverterUInt64.write(value.lastPieceTokenLen, into: &buf)
-    }
-}
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeEncodingResult_lift(_ buf: RustBuffer) throws -> EncodingResult {
-    return try FfiConverterTypeEncodingResult.lift(buf)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeEncodingResult_lower(_ value: EncodingResult) -> RustBuffer {
-    return FfiConverterTypeEncodingResult.lower(value)
-}
-
-
-public struct UnstableEncodingResult {
-    public var tokens: [UInt32]
-    public var completions: [[UInt32]]
-
-    // Default memberwise initializers are never public by default, so we
-    // declare one manually.
-    public init(tokens: [UInt32], completions: [[UInt32]]) {
-        self.tokens = tokens
-        self.completions = completions
-    }
-}
-
-#if compiler(>=6)
-extension UnstableEncodingResult: Sendable {}
-#endif
-
-
-extension UnstableEncodingResult: Equatable, Hashable {
-    public static func ==(lhs: UnstableEncodingResult, rhs: UnstableEncodingResult) -> Bool {
-        if lhs.tokens != rhs.tokens {
-            return false
-        }
-        if lhs.completions != rhs.completions {
-            return false
-        }
-        return true
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(tokens)
-        hasher.combine(completions)
-    }
-}
-
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public struct FfiConverterTypeUnstableEncodingResult: FfiConverterRustBuffer {
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UnstableEncodingResult {
-        return
-            try UnstableEncodingResult(
-                tokens: FfiConverterSequenceUInt32.read(from: &buf), 
-                completions: FfiConverterSequenceSequenceUInt32.read(from: &buf)
-        )
-    }
-
-    public static func write(_ value: UnstableEncodingResult, into buf: inout [UInt8]) {
-        FfiConverterSequenceUInt32.write(value.tokens, into: &buf)
-        FfiConverterSequenceSequenceUInt32.write(value.completions, into: &buf)
-    }
-}
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeUnstableEncodingResult_lift(_ buf: RustBuffer) throws -> UnstableEncodingResult {
-    return try FfiConverterTypeUnstableEncodingResult.lift(buf)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeUnstableEncodingResult_lower(_ value: UnstableEncodingResult) -> RustBuffer {
-    return FfiConverterTypeUnstableEncodingResult.lower(value)
-}
-
-
 public enum TiktokenError: Swift.Error {
 
     
     
-    case ValueError(message: String)
-    
-    case KeyError(message: String)
-    
-    case DecodeError(message: String)
-    
+    case RegexError(message: String
+    )
+    case DecodeError(message: String
+    )
 }
 
 
@@ -920,20 +652,14 @@ public struct FfiConverterTypeTiktokenError: FfiConverterRustBuffer {
         
 
         
-        case 1: return .ValueError(
+        case 1: return .RegexError(
             message: try FfiConverterString.read(from: &buf)
-        )
-        
-        case 2: return .KeyError(
+            )
+        case 2: return .DecodeError(
             message: try FfiConverterString.read(from: &buf)
-        )
-        
-        case 3: return .DecodeError(
-            message: try FfiConverterString.read(from: &buf)
-        )
-        
+            )
 
-        default: throw UniffiInternalError.unexpectedEnumCase
+         default: throw UniffiInternalError.unexpectedEnumCase
         }
     }
 
@@ -943,14 +669,16 @@ public struct FfiConverterTypeTiktokenError: FfiConverterRustBuffer {
         
 
         
-        case .ValueError(_ /* message is ignored*/):
-            writeInt(&buf, Int32(1))
-        case .KeyError(_ /* message is ignored*/):
-            writeInt(&buf, Int32(2))
-        case .DecodeError(_ /* message is ignored*/):
-            writeInt(&buf, Int32(3))
-
         
+        case let .RegexError(message):
+            writeInt(&buf, Int32(1))
+            FfiConverterString.write(message, into: &buf)
+            
+        
+        case let .DecodeError(message):
+            writeInt(&buf, Int32(2))
+            FfiConverterString.write(message, into: &buf)
+            
         }
     }
 }
@@ -984,6 +712,31 @@ extension TiktokenError: Foundation.LocalizedError {
 
 
 
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceUInt8: FfiConverterRustBuffer {
+    typealias SwiftType = [UInt8]
+
+    public static func write(_ value: [UInt8], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterUInt8.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [UInt8] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [UInt8]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterUInt8.read(from: &buf))
+        }
+        return seq
+    }
+}
 
 #if swift(>=5.8)
 @_documentation(visibility: private)
@@ -1038,56 +791,6 @@ fileprivate struct FfiConverterSequenceString: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-fileprivate struct FfiConverterSequenceData: FfiConverterRustBuffer {
-    typealias SwiftType = [Data]
-
-    public static func write(_ value: [Data], into buf: inout [UInt8]) {
-        let len = Int32(value.count)
-        writeInt(&buf, len)
-        for item in value {
-            FfiConverterData.write(item, into: &buf)
-        }
-    }
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [Data] {
-        let len: Int32 = try readInt(&buf)
-        var seq = [Data]()
-        seq.reserveCapacity(Int(len))
-        for _ in 0 ..< len {
-            seq.append(try FfiConverterData.read(from: &buf))
-        }
-        return seq
-    }
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-fileprivate struct FfiConverterSequenceSequenceUInt32: FfiConverterRustBuffer {
-    typealias SwiftType = [[UInt32]]
-
-    public static func write(_ value: [[UInt32]], into buf: inout [UInt8]) {
-        let len = Int32(value.count)
-        writeInt(&buf, len)
-        for item in value {
-            FfiConverterSequenceUInt32.write(item, into: &buf)
-        }
-    }
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [[UInt32]] {
-        let len: Int32 = try readInt(&buf)
-        var seq = [[UInt32]]()
-        seq.reserveCapacity(Int(len))
-        for _ in 0 ..< len {
-            seq.append(try FfiConverterSequenceUInt32.read(from: &buf))
-        }
-        return seq
-    }
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
 fileprivate struct FfiConverterDictionaryStringUInt32: FfiConverterRustBuffer {
     public static func write(_ value: [String: UInt32], into buf: inout [UInt8]) {
         let len = Int32(value.count)
@@ -1110,20 +813,41 @@ fileprivate struct FfiConverterDictionaryStringUInt32: FfiConverterRustBuffer {
         return dict
     }
 }
-public func newCoreBpe(encoder: [String: UInt32], specialTokensEncoder: [String: UInt32], pattern: String)throws  -> CoreBpe  {
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterDictionarySequenceUInt8UInt32: FfiConverterRustBuffer {
+    public static func write(_ value: [[UInt8]: UInt32], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for (key, value) in value {
+            FfiConverterSequenceUInt8.write(key, into: &buf)
+            FfiConverterUInt32.write(value, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [[UInt8]: UInt32] {
+        let len: Int32 = try readInt(&buf)
+        var dict = [[UInt8]: UInt32]()
+        dict.reserveCapacity(Int(len))
+        for _ in 0..<len {
+            let key = try FfiConverterSequenceUInt8.read(from: &buf)
+            let value = try FfiConverterUInt32.read(from: &buf)
+            dict[key] = value
+        }
+        return dict
+    }
+}
+public func newCoreBpe(encoder: [[UInt8]: UInt32], specialTokensEncoder: [String: UInt32], pattern: String)throws  -> CoreBpe  {
     return try  FfiConverterTypeCoreBpe_lift(try rustCallWithError(FfiConverterTypeTiktokenError_lift) {
     uniffi_tiktoken_fn_func_new_core_bpe(
-        FfiConverterDictionaryStringUInt32.lower(encoder),
+        FfiConverterDictionarySequenceUInt8UInt32.lower(encoder),
         FfiConverterDictionaryStringUInt32.lower(specialTokensEncoder),
         FfiConverterString.lower(pattern),$0
     )
 })
 }
 
-// Make the ensure init function public so that other modules which have external type references to
-// our types can call it.
-public func uniffiEnsureTiktokenInitialized() {
-    // Contract version checking has been removed - initialization always succeeds
-}
 
 // swiftlint:enable all
