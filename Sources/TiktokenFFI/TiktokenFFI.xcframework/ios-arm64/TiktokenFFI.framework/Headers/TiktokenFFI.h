@@ -253,19 +253,9 @@ uint64_t uniffi_tiktoken_fn_clone_corebpe(uint64_t handle, RustCallStatus *_Nonn
 void uniffi_tiktoken_fn_free_corebpe(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_CONSTRUCTOR_COREBPE_NEW
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_CONSTRUCTOR_COREBPE_NEW
-uint64_t uniffi_tiktoken_fn_constructor_corebpe_new(RustBuffer encoder, RustBuffer special_tokens_encoder, RustBuffer pattern, RustCallStatus *_Nonnull out_status
-);
-#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_DECODE_BYTES
 #define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_DECODE_BYTES
 RustBuffer uniffi_tiktoken_fn_method_corebpe_decode_bytes(uint64_t ptr, RustBuffer tokens, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_DECODE_SINGLE_TOKEN_BYTES
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_DECODE_SINGLE_TOKEN_BYTES
-RustBuffer uniffi_tiktoken_fn_method_corebpe_decode_single_token_bytes(uint64_t ptr, uint32_t token, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE
@@ -273,59 +263,14 @@ RustBuffer uniffi_tiktoken_fn_method_corebpe_decode_single_token_bytes(uint64_t 
 RustBuffer uniffi_tiktoken_fn_method_corebpe_encode(uint64_t ptr, RustBuffer text, RustBuffer allowed_special, RustCallStatus *_Nonnull out_status
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_BYTES
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_BYTES
-RustBuffer uniffi_tiktoken_fn_method_corebpe_encode_bytes(uint64_t ptr, RustBuffer input, RustCallStatus *_Nonnull out_status
-);
-#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_ORDINARY
 #define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_ORDINARY
 RustBuffer uniffi_tiktoken_fn_method_corebpe_encode_ordinary(uint64_t ptr, RustBuffer text, RustCallStatus *_Nonnull out_status
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_SINGLE_PIECE
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_SINGLE_PIECE
-RustBuffer uniffi_tiktoken_fn_method_corebpe_encode_single_piece(uint64_t ptr, RustBuffer piece, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_SINGLE_TOKEN
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_SINGLE_TOKEN
-uint32_t uniffi_tiktoken_fn_method_corebpe_encode_single_token(uint64_t ptr, RustBuffer piece, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_WITH_DETAILS
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_WITH_DETAILS
-RustBuffer uniffi_tiktoken_fn_method_corebpe_encode_with_details(uint64_t ptr, RustBuffer text, RustBuffer allowed_special, RustCallStatus *_Nonnull out_status
-);
-#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_WITH_SPECIAL_TOKENS
 #define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_WITH_SPECIAL_TOKENS
 RustBuffer uniffi_tiktoken_fn_method_corebpe_encode_with_special_tokens(uint64_t ptr, RustBuffer text, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_WITH_UNSTABLE
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_ENCODE_WITH_UNSTABLE
-RustBuffer uniffi_tiktoken_fn_method_corebpe_encode_with_unstable(uint64_t ptr, RustBuffer text, RustBuffer allowed_special, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_MAX_TOKEN_VALUE
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_MAX_TOKEN_VALUE
-uint32_t uniffi_tiktoken_fn_method_corebpe_max_token_value(uint64_t ptr, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_N_VOCAB
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_N_VOCAB
-uint32_t uniffi_tiktoken_fn_method_corebpe_n_vocab(uint64_t ptr, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_SPECIAL_TOKENS
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_SPECIAL_TOKENS
-RustBuffer uniffi_tiktoken_fn_method_corebpe_special_tokens(uint64_t ptr, RustCallStatus *_Nonnull out_status
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_TOKEN_BYTE_VALUES
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_METHOD_COREBPE_TOKEN_BYTE_VALUES
-RustBuffer uniffi_tiktoken_fn_method_corebpe_token_byte_values(uint64_t ptr, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_FN_FUNC_NEW_CORE_BPE
@@ -605,21 +550,9 @@ uint16_t uniffi_tiktoken_checksum_method_corebpe_decode_bytes(void
     
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_DECODE_SINGLE_TOKEN_BYTES
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_DECODE_SINGLE_TOKEN_BYTES
-uint16_t uniffi_tiktoken_checksum_method_corebpe_decode_single_token_bytes(void
-    
-);
-#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE
 #define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE
 uint16_t uniffi_tiktoken_checksum_method_corebpe_encode(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_BYTES
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_BYTES
-uint16_t uniffi_tiktoken_checksum_method_corebpe_encode_bytes(void
     
 );
 #endif
@@ -629,63 +562,9 @@ uint16_t uniffi_tiktoken_checksum_method_corebpe_encode_ordinary(void
     
 );
 #endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_SINGLE_PIECE
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_SINGLE_PIECE
-uint16_t uniffi_tiktoken_checksum_method_corebpe_encode_single_piece(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_SINGLE_TOKEN
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_SINGLE_TOKEN
-uint16_t uniffi_tiktoken_checksum_method_corebpe_encode_single_token(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_WITH_DETAILS
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_WITH_DETAILS
-uint16_t uniffi_tiktoken_checksum_method_corebpe_encode_with_details(void
-    
-);
-#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_WITH_SPECIAL_TOKENS
 #define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_WITH_SPECIAL_TOKENS
 uint16_t uniffi_tiktoken_checksum_method_corebpe_encode_with_special_tokens(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_WITH_UNSTABLE
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_ENCODE_WITH_UNSTABLE
-uint16_t uniffi_tiktoken_checksum_method_corebpe_encode_with_unstable(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_MAX_TOKEN_VALUE
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_MAX_TOKEN_VALUE
-uint16_t uniffi_tiktoken_checksum_method_corebpe_max_token_value(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_N_VOCAB
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_N_VOCAB
-uint16_t uniffi_tiktoken_checksum_method_corebpe_n_vocab(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_SPECIAL_TOKENS
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_SPECIAL_TOKENS
-uint16_t uniffi_tiktoken_checksum_method_corebpe_special_tokens(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_TOKEN_BYTE_VALUES
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_METHOD_COREBPE_TOKEN_BYTE_VALUES
-uint16_t uniffi_tiktoken_checksum_method_corebpe_token_byte_values(void
-    
-);
-#endif
-#ifndef UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_CONSTRUCTOR_COREBPE_NEW
-#define UNIFFI_FFIDEF_UNIFFI_TIKTOKEN_CHECKSUM_CONSTRUCTOR_COREBPE_NEW
-uint16_t uniffi_tiktoken_checksum_constructor_corebpe_new(void
     
 );
 #endif
