@@ -31,9 +31,8 @@ let text = "Hello, world!"
 let tokens = encoder.encode(text: text, allowedSpecial: [])
 print("Tokens: \(tokens)")
 
-// Decode tokens
-let decodedBytes = try encoder.decodeBytes(tokens: tokens)
-if let decoded = String(data: Data(decodedBytes), encoding: .utf8) {
+// Decode tokens (returns String? directly)
+if let decoded = try encoder.decode(tokens: tokens) {
     print("Decoded: \(decoded)")
 }
 ```

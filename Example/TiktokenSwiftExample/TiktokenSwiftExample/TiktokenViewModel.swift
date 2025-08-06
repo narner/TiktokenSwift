@@ -113,14 +113,14 @@ class TiktokenViewModel: ObservableObject {
         let tokensToProcess = tokens
         do {
             let result = try await Task.detached { [encoder] in
-                return try encoder.decodeBytes(tokens: tokensToProcess)
+                return try encoder.decode(tokens: tokensToProcess)
             }.value
             
-            // Convert [UInt8] to String
-            if let decoded = String(data: Data(result), encoding: .utf8) {
+            // The new decode method returns String? directly
+            if let decoded = result {
                 decodedText = decoded
             } else {
-                errorMessage = "Failed to convert decoded bytes to string"
+                errorMessage = "Failed to decode tokens to valid UTF-8 string"
             }
         } catch {
             errorMessage = "Failed to decode tokens: \(error.localizedDescription)"

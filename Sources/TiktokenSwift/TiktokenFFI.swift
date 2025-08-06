@@ -492,6 +492,8 @@ public protocol CoreBpeProtocol: AnyObject, Sendable {
     
     func decodeBytes(tokens: [UInt32]) throws  -> [UInt8]
     
+    func decode(tokens: [UInt32]) throws  -> String?
+    
     func encode(text: String, allowedSpecial: [String])  -> [UInt32]
     
     func encodeOrdinary(text: String)  -> [UInt32]
@@ -553,6 +555,11 @@ open func decodeBytes(tokens: [UInt32])throws  -> [UInt8]  {
         FfiConverterSequenceUInt32.lower(tokens),$0
     )
 })
+}
+
+open func decode(tokens: [UInt32]) throws -> String? {
+    let bytes = try decodeBytes(tokens: tokens)
+    return String(bytes: bytes, encoding: .utf8)
 }
     
 open func encode(text: String, allowedSpecial: [String]) -> [UInt32]  {

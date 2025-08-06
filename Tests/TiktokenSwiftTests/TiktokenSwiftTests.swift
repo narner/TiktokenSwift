@@ -92,7 +92,7 @@ final class TiktokenSwiftTests: XCTestCase {
         // Test roundtrip
         let text = "The quick brown fox jumps over the lazy dog."
         let tokens = encoder.encode(text: text, allowedSpecial: [])
-        let decoded = String(data: Data(try encoder.decodeBytes(tokens: tokens)), encoding: .utf8)
+        let decoded = try encoder.decode(tokens: tokens)
         XCTAssertEqual(decoded, text)
     }
     
@@ -105,7 +105,7 @@ final class TiktokenSwiftTests: XCTestCase {
         // Test roundtrip
         let text = "Testing r50k_base encoding"
         let tokens = encoder.encode(text: text, allowedSpecial: [])
-        let decoded = String(data: Data(try encoder.decodeBytes(tokens: tokens)), encoding: .utf8)
+        let decoded = try encoder.decode(tokens: tokens)
         XCTAssertEqual(decoded, text)
     }
     
@@ -118,7 +118,7 @@ final class TiktokenSwiftTests: XCTestCase {
         // Test roundtrip
         let text = "Testing p50k_base encoding"
         let tokens = encoder.encode(text: text, allowedSpecial: [])
-        let decoded = String(data: Data(try encoder.decodeBytes(tokens: tokens)), encoding: .utf8)
+        let decoded = try encoder.decode(tokens: tokens)
         XCTAssertEqual(decoded, text)
     }
     
@@ -151,7 +151,7 @@ final class TiktokenSwiftTests: XCTestCase {
             XCTAssertFalse(tokens.isEmpty)
             
             // Test roundtrip
-            let decoded = String(data: Data(try encoder.decodeBytes(tokens: tokens)), encoding: .utf8)
+            let decoded = try encoder.decode(tokens: tokens)
             XCTAssertEqual(decoded, text)
         } catch {
             // o200k_base might not be available in all versions
@@ -219,19 +219,19 @@ final class TiktokenSwiftTests: XCTestCase {
             // Test with large repetition
             let bigValue = String(repeating: char, count: 10000)
             let tokens = encoder.encode(text: bigValue, allowedSpecial: [])
-            let decoded = String(data: Data(try encoder.decodeBytes(tokens: tokens)), encoding: .utf8)
+            let decoded = try encoder.decode(tokens: tokens)
             XCTAssertEqual(decoded, bigValue, "Failed for repeated: \(char)")
             
             // Test with space prefix
             let withPrefix = " " + bigValue
             let tokensPrefix = encoder.encode(text: withPrefix, allowedSpecial: [])
-            let decodedPrefix = String(data: Data(try encoder.decodeBytes(tokens: tokensPrefix)), encoding: .utf8)
+            let decodedPrefix = try encoder.decode(tokens: tokensPrefix)
             XCTAssertEqual(decodedPrefix, withPrefix, "Failed with prefix for: \(char)")
             
             // Test with newline suffix
             let withSuffix = bigValue + "\n"
             let tokensSuffix = encoder.encode(text: withSuffix, allowedSpecial: [])
-            let decodedSuffix = String(data: Data(try encoder.decodeBytes(tokens: tokensSuffix)), encoding: .utf8)
+            let decodedSuffix = try encoder.decode(tokens: tokensSuffix)
             XCTAssertEqual(decodedSuffix, withSuffix, "Failed with suffix for: \(char)")
         }
     }
@@ -252,7 +252,7 @@ final class TiktokenSwiftTests: XCTestCase {
         
         for text in testCases {
             let tokens = encoder.encode(text: text, allowedSpecial: [])
-            let decoded = String(data: Data(try encoder.decodeBytes(tokens: tokens)), encoding: .utf8)
+            let decoded = try encoder.decode(tokens: tokens)
             XCTAssertEqual(decoded, text, "Roundtrip failed for: \(text)")
         }
     }
@@ -278,7 +278,7 @@ final class TiktokenSwiftTests: XCTestCase {
         // Mixed whitespace
         let whitespace = " \t\n\r"
         let wsTokens = encoder.encode(text: whitespace, allowedSpecial: [])
-        let wsDecoded = String(data: Data(try encoder.decodeBytes(tokens: wsTokens)), encoding: .utf8)
+        let wsDecoded = try encoder.decode(tokens: wsTokens)
         XCTAssertEqual(wsDecoded, whitespace)
     }
     
@@ -299,7 +299,7 @@ final class TiktokenSwiftTests: XCTestCase {
         let tokens = encoder.encode(text: text, allowedSpecial: [])
         
         measure {
-            _ = try? encoder.decodeBytes(tokens: tokens)
+            _ = try? encoder.decode(tokens: tokens)
         }
     }
     
@@ -314,8 +314,7 @@ final class TiktokenSwiftTests: XCTestCase {
         DispatchQueue.concurrentPerform(iterations: iterations) { i in
             let text = "Concurrent test \(i)"
             let tokens = encoder.encode(text: text, allowedSpecial: [])
-            if let decoded = try? encoder.decodeBytes(tokens: tokens),
-               let decodedText = String(data: Data(decoded), encoding: .utf8) {
+            if let decodedText = try? encoder.decode(tokens: tokens) {
                 XCTAssertEqual(decodedText, text)
             }
             expectation.fulfill()

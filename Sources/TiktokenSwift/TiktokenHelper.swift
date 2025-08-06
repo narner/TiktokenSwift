@@ -48,9 +48,6 @@ public extension CoreBpe {
     
     /// Decodes tokens to string
     func decodeTokens(_ tokens: [UInt32]) -> String? {
-        guard let bytes = try? decodeBytes(tokens: tokens) else {
-            return nil
-        }
-        return String(data: Data(bytes), encoding: .utf8)
+        return try? decode(tokens: tokens)
     }
 }
