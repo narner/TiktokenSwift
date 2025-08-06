@@ -28,11 +28,12 @@ let encoder = try await CoreBpe.cl100kBase()
 
 // Encode text
 let text = "Hello, world!"
-let tokens = encoder.encodeText(text)
+let tokens = encoder.encode(text: text, allowedSpecial: [])
 print("Tokens: \(tokens)")
 
 // Decode tokens
-if let decoded = encoder.decodeTokens(tokens) {
+let decodedBytes = try encoder.decodeBytes(tokens: tokens)
+if let decoded = String(data: Data(decodedBytes), encoding: .utf8) {
     print("Decoded: \(decoded)")
 }
 ```
@@ -60,19 +61,23 @@ let tokensWithSpecial = encoder.encode(
     allowedSpecial: ["<|endoftext|>"]
 )
 
-// Or encode with all special tokens
-let tokensWithAllSpecial = encoder.encodeWithSpecialTokens(text: textWithSpecial)
+// Or encode ordinary text (without special tokens)
+let tokensOrdinary = encoder.encodeOrdinary(text: "Hello <|endoftext|> World")
 ```
 
-### Encoding with Details
+### Working with Token Counts
 
 ```swift
-let details = encoder.encodeWithDetails(
-    text: "Hello world",
-    allowedSpecial: []
-)
-print("Tokens: \(details.tokens)")
-print("Last token length: \(details.lastPieceTokenLen)")
+// Get token count for text
+let text = "The quick brown fox jumps over the lazy dog"
+let tokens = encoder.encode(text: text, allowedSpecial: [])
+print("Token count: \(tokens.count)")
+
+// Useful for API rate limiting
+let maxTokens = 4096
+if tokens.count > maxTokens {
+    print("Text exceeds token limit")
+}
 ```
 
 ## Requirements
