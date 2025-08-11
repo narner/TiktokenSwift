@@ -70,7 +70,8 @@ struct ContentView: View {
                         InfoSection(
                             encodingName: viewModel.selectedEncoding.displayName,
                             vocabularySize: viewModel.vocabularySize,
-                            specialTokensCount: viewModel.specialTokensCount
+                            specialTokensCount: viewModel.specialTokensCount,
+                            modelList: viewModel.selectedEncoding.modelList
                         )
                     }
                     

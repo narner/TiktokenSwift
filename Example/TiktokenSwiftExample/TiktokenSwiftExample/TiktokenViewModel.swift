@@ -13,6 +13,7 @@ enum EncodingType: String, CaseIterable {
     case r50kBase = "r50k_base" 
     case p50kBase = "p50k_base"
     case o200kBase = "o200k_base"
+    case o200kHarmony = "o200k_harmony"
     
     var displayName: String {
         switch self {
@@ -23,7 +24,24 @@ enum EncodingType: String, CaseIterable {
         case .p50kBase:
             return "p50k_base (Codex)"
         case .o200kBase:
-            return "o200k_base (GPT-4o)"
+            return "o200k_base (GPT-5/4.5/4.1/o3/o4-mini/GPT-4o)"
+        case .o200kHarmony:
+            return "o200k_harmony (gpt-oss)"
+        }
+    }
+    
+    var modelList: String {
+        switch self {
+        case .cl100kBase:
+            return "GPT-4, GPT-3.5-turbo"
+        case .r50kBase:
+            return "GPT-2, legacy models"
+        case .p50kBase:
+            return "Codex models"
+        case .o200kBase:
+            return "GPT-5, GPT-4.5, GPT-4.1, o1, o3, o4-mini, GPT-4o"
+        case .o200kHarmony:
+            return "gpt-oss (structured output)"
         }
     }
 }
@@ -60,6 +78,8 @@ class TiktokenViewModel: ObservableObject {
                 encoder = try await CoreBpe.p50kBase()
             case .o200kBase:
                 encoder = try await CoreBpe.o200kBase()
+            case .o200kHarmony:
+                encoder = try await CoreBpe.o200kHarmony()
             }
             errorMessage = ""
             
@@ -145,6 +165,8 @@ class TiktokenViewModel: ObservableObject {
             return 50281
         case .o200kBase:
             return 200000
+        case .o200kHarmony:
+            return 200018  // o200k_base + additional special tokens
         }
     }
     
@@ -159,6 +181,8 @@ class TiktokenViewModel: ObservableObject {
             return 1
         case .o200kBase:
             return 2
+        case .o200kHarmony:
+            return 20  // Many special tokens for structured output
         }
     }
     

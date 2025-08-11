@@ -11,6 +11,15 @@ struct InputSection: View {
     @Binding var inputText: String
     let onEncode: () -> Void
     let isLoading: Bool
+    @State private var showSamples = false
+    
+    let sampleTexts = [
+        "Hello, GPT-5! This is a test of the new o200k_base encoding.",
+        "Testing GPT-4.5 and GPT-4.1 models with improved performance.",
+        "The new o3 and o4-mini models are optimized for reasoning tasks.",
+        "Using o200k_harmony encoding for structured output with <|constrain|> and <|return|> tokens.",
+        "Compare token efficiency: GPT-5 vs GPT-4 vs GPT-3.5-turbo"
+    ]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -19,6 +28,21 @@ struct InputSection: View {
                     .font(.headline)
                 
                 Spacer()
+                
+                Menu {
+                    ForEach(sampleTexts, id: \.self) { sample in
+                        Button(action: {
+                            inputText = sample
+                        }) {
+                            Text(sample)
+                                .lineLimit(1)
+                        }
+                    }
+                } label: {
+                    Label("Samples", systemImage: "text.quote")
+                        .font(.caption)
+                }
+                .menuStyle(.borderlessButton)
                 
                 if !inputText.isEmpty {
                     Button(action: {

@@ -41,6 +41,7 @@ public struct Cl100kBaseEncoderLoader {
             "<|endoftext|>": 199999,
             "<|endofprompt|>": 200018
         ]
+        // o200k_harmony special tokens are handled in loadO200kHarmony()
     ]
     
     /// Patterns for different encodings
@@ -60,6 +61,11 @@ public struct Cl100kBaseEncoderLoader {
     
     /// Load an encoder for the specified encoding name
     public static func loadEncoder(named encodingName: String) async throws -> CoreBpe {
+        // Special handling for o200k_harmony (based on o200k_base)
+        if encodingName == "o200k_harmony" {
+            return try await loadO200kHarmony()
+        }
+        
         // Check if we have a cached version
         let cacheURL = cacheDirectory.appendingPathComponent("\(encodingName).tiktoken")
         
@@ -127,6 +133,64 @@ public struct Cl100kBaseEncoderLoader {
         return try newCoreBpe(
             encoder: mergeableRanks,
             specialTokensEncoder: specialTokens,
+            pattern: pattern
+        )
+    }
+    
+    /// Load o200k_harmony encoding (based on o200k_base with additional special tokens)
+    private static func loadO200kHarmony() async throws -> CoreBpe {
+        // First load o200k_base
+        _ = try await loadEncoder(named: "o200k_base")
+        
+        // o200k_harmony uses the same base vocabulary and pattern as o200k_base
+        // but has many additional special tokens
+        var harmonySpecialTokens: [String: UInt32] = [
+            "<|startoftext|>": 199998,
+            "<|endoftext|>": 199999,
+            "<|reserved_200000|>": 200000,
+            "<|reserved_200001|>": 200001,
+            "<|return|>": 200002,
+            "<|constrain|>": 200003,
+            "<|reserved_200004|>": 200004,
+            "<|channel|>": 200005,
+            "<|start|>": 200006,
+            "<|end|>": 200007,
+            "<|message|>": 200008,
+            "<|reserved_200009|>": 200009,
+            "<|reserved_200010|>": 200010,
+            "<|reserved_200011|>": 200011,
+            "<|call|>": 200012,
+            "<|endofprompt|>": 200018
+        ]
+        
+        // Add reserved tokens from 200013 to 201087
+        for i in 200013...201087 {
+            harmonySpecialTokens["<|reserved_\(i)|>"] = UInt32(i)
+        }
+        
+        print("📊 Loaded o200k_harmony:")
+        print("   Based on o200k_base vocabulary")
+        print("   Special tokens: \(harmonySpecialTokens.count)")
+        
+        // We need to reconstruct the encoder with the new special tokens
+        // Since we can't access the internal encoder data from CoreBpe,
+        // we'll need to load the o200k_base data directly
+        let cacheURL = cacheDirectory.appendingPathComponent("o200k_base.tiktoken")
+        
+        // Make sure o200k_base is downloaded
+        if !FileManager.default.fileExists(atPath: cacheURL.path) {
+            // This will download and cache o200k_base
+            _ = try await loadEncoder(named: "o200k_base")
+        }
+        
+        // Now load the raw data and create o200k_harmony
+        let data = try Data(contentsOf: cacheURL)
+        let mergeableRanks = try parseTiktokenBpe(data)
+        let pattern = patterns["o200k_base"] ?? patterns["cl100k_base"]!
+        
+        return try newCoreBpe(
+            encoder: mergeableRanks,
+            specialTokensEncoder: harmonySpecialTokens,
             pattern: pattern
         )
     }
@@ -239,5 +303,10 @@ public extension CoreBpe {
     /// Load o200k_base encoding
     static func o200kBase() async throws -> CoreBpe {
         return try await loadEncoding(named: "o200k_base")
+    }
+    
+    /// Load o200k_harmony encoding (based on o200k_base with additional special tokens)
+    static func o200kHarmony() async throws -> CoreBpe {
+        return try await loadEncoding(named: "o200k_harmony")
     }
 }
