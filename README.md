@@ -2,7 +2,7 @@
 
 Native Swift wrapper for OpenAI's [tiktoken](https://github.com/openai/tiktoken) library, providing fast BPE tokenization for OpenAI models.
 
-TiktokenSwift brings the official tiktoken tokenizer to Swift applications through a lightweight FFI bridge, maintaining the same performance and accuracy as the original Python implementation. It supports all standard OpenAI encodings including `cl100k_base` (used by GPT-3.5-turbo and GPT-4), `r50k_base`, `p50k_base`, and `o200k_base`.
+TiktokenSwift brings the official tiktoken tokenizer to Swift applications through a lightweight FFI bridge, maintaining the same performance and accuracy as the original Python implementation. It supports all standard OpenAI encodings including `cl100k_base` (used by GPT-3.5-turbo and GPT-4), `r50k_base`, `p50k_base`, `o200k_base` (used by GPT-4o), and `o200k_harmony` (used by gpt-oss models).
 
 📱 Check out the [example SwiftUI app](Example/TiktokenSwiftExample) to see TiktokenSwift in action!
 
@@ -43,8 +43,11 @@ if let decoded = try encoder.decode(tokens: tokens) {
 // cl100k_base - Used by GPT-3.5-turbo and GPT-4
 let cl100k = try await CoreBpe.cl100kBase()
 
-// o200k_base - Used by GPT-4o and newer models
+// o200k_base - Used by GPT-4o and o3-mini
 let o200k = try await CoreBpe.o200kBase()
+
+// o200k_harmony - Used by gpt-oss models (structured output support)
+let o200kHarmony = try await CoreBpe.o200kHarmony()
 
 // Other encodings
 let r50k = try await CoreBpe.r50kBase()    // GPT-2 and older models
@@ -67,6 +70,14 @@ let tokensWithSpecial = encoder.encode(
 
 // Or encode ordinary text (without special tokens)
 let tokensOrdinary = encoder.encodeOrdinary(text: "Hello <|endoftext|> World")
+
+// o200k_harmony has special tokens for structured output
+let harmony = try await CoreBpe.o200kHarmony()
+let structuredText = "Analyze <|constrain|> only positive <|return|> result"
+let structuredTokens = harmony.encode(
+    text: structuredText,
+    allowedSpecial: ["<|constrain|>", "<|return|>"]
+)
 ```
 
 ### Working with Token Counts
@@ -90,6 +101,8 @@ Common token limits for OpenAI models:
 - GPT-4: 8,192 tokens (standard), 32,768 tokens (32k), 128,000 tokens (turbo)
 - GPT-3.5-turbo: 4,096 tokens (standard), 16,385 tokens (16k)
 - GPT-4o: 128,000 tokens
+- o3-mini: 128,000 tokens
+- gpt-oss models: 128,000 tokens
 
 ## Requirements
 
